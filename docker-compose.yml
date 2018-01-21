@@ -1,0 +1,37 @@
+version: '3'
+services:
+  web:
+    build: .
+    # map host project folder to container folder
+    volumes:
+      - ./src/htdocs:/var/www/html
+    ports:
+      - "80:80" # web
+      - "9001:9000" # xdebug
+    environment:
+      XDEBUG_CONFIG: "remote_host=192.168.1.69"
+    networks:
+      - my-network
+
+  redis:
+    image: redis
+    ports:
+      - 6379
+    networks:
+      - my-network
+
+  node:
+    image: node:8.9.4
+    build: ./node
+    expose:
+        - "3000"
+    networks:
+        - my-network
+
+networks:
+  my-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
